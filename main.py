@@ -25,18 +25,25 @@ def getData(content):
 
 def test(data):
 	m = len(data[0])
-	i = 0
+	i = 1
 	theta0 = 0
 	theta1 = 0
-	while (i < m):
-		estimated = theta0 + (theta1 * data[0][i])
-		tmp0 = 1 * (1 / float(m)) * (estimated - data[1][i])
-		tmp1 = 1 * (1 / float(m)) * ((estimated - data[1][i]) * data[0][i])
-		theta0 = tmp0
-		theta1 = tmp1
+	while (i < 40):
+		j = 0
+		tmp0 = 0
+		tmp1 = 0
+		while (j < m):
+			estimated = theta0 + (theta1 * data[0][j])
+			tmp0 += estimated - data[1][j]
+			tmp1 += (estimated - data[1][j]) * data[0][j]
+			j += 1
+		theta0 -= (1 / float(i)) * (1 / float(m)) * tmp0
+		theta1 -= (1 / float(i)) * (1 / float(m)) * tmp1
+		if (i == 2):
+			print(tmp0)
 		i += 1
-	print(theta0)
-	print(theta1)
+	# print(theta0)
+	# print(theta1)
 
 def main():
 	if (len(sys.argv) != 2):
