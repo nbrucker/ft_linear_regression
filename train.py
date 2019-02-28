@@ -1,5 +1,6 @@
 import sys
 import matplotlib.pyplot as plt
+import json
 
 import error
 import hypothesis
@@ -62,17 +63,24 @@ def train(data):
 
 def scale(data, min, max):
 	i = 0
+	div = float(max - min)
+	if (div == 0):
+		div = float(1)
 	while (i < len(data['km'])):
-		data['km'][i] = (data['km'][i] - min) / (float(max - min) if float(max - min) != 0 else 1)
+		data['km'][i] = (data['km'][i] - min) / div
 		i += 1
 	return data
 
-def saveTheta(t0, t1):
-	content = str(t0) + ',' + str(t1)
-	f = open('theta', 'w')
-	f.close()
-	f = open('theta', 'w')
-	f.write(content)
+def saveTheta(t0, t1, min, max):
+	output = {
+		'theta0': t0,
+		'theta1': t1,
+		'min': min,
+		'max': max
+	}
+	open('thetas.json', 'w').close()
+	f = open('thetas.json', 'w')
+	f.write(json.dumps(output))
 	f.close()
 
 def main():
@@ -91,7 +99,7 @@ def main():
 		error.error('no data')
 	data = scale(data, min, max)
 	t0, t1 = train(data)
-	saveTheta(t0 / (float(min) if min != 0 else 1), t1 / (float(min) if min != 0 else 1))
+	saveTheta(t0, t1, min, max)
 	i = 0
 	predict = []
 	while (i < len(data['km'])):

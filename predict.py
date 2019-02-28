@@ -1,4 +1,5 @@
 import sys
+import json
 
 import error
 import hypothesis
@@ -17,26 +18,44 @@ def isInt(x):
 	except:
 		return False
 
+def isJson(x):
+	try:
+		json.loads(x)
+		return True
+	except:
+		return False
+
+def checkData(thetas, key, f):
+	if (key not in thetas or not f(thetas[key])):
+		error.error('Unexpected error')
+
 def main():
-	if (len(sys.argv) != 2):
-		error.error('python predict.py [x]')
-	x = sys.argv[1]
+	if (len(sys.argv) != 1):
+		error.error('python predict.py')
+	x = input('Mileage ? ')
 	if (not isInt(x)):
-		error.error('Invalid parameter')
+		error.error('Invalid mileage')
 	x = int(x)
 	content = ''
+	thetas = {}
 	try:
-		f = open('theta', 'r')
+		f = open('thetas.json', 'r')
 		content = f.read()
 		f.close()
 	except:
 		error.error('error opening file')
-	theta = content.split(',')
-	if (len(theta) != 2 or not isFloat(theta[0]) or not isFloat(theta[1])):
-		error.error('Unexpected error')
-	theta[0] = float(theta[0])
-	theta[1] = float(theta[1])
-	print(hypothesis.hypothesis(theta[0], theta[1], x))
+	if (not isJson(content)):
+		error.error('error in thetas.json')
+	thetas = json.loads(content)
+	checkData(thetas, 'theta0', isFloat)
+	checkData(thetas, 'theta1', isFloat)
+	checkData(thetas, 'min', isInt)
+	checkData(thetas, 'max', isInt)
+	div = float(int(thetas['max']) - int(thetas['min']))
+	if (div == 0):
+		div = float(1)
+	x = (x - int(thetas['min'])) / div
+	print(hypothesis.hypothesis(float(thetas['theta0']), float(thetas['theta1']), x))
 
 if __name__ == "__main__":
 	main()
