@@ -58,7 +58,6 @@ def train(data):
 		theta0 -= (1 / float(i)) * (1 / float(m)) * tmp0
 		theta1 -= (1 / float(i)) * (1 / float(m)) * tmp1
 		i += 1
-	print(i)
 	return theta0, theta1
 
 def scale(data, min, max):
