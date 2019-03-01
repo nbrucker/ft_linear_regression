@@ -18,16 +18,10 @@ def isInt(x):
 	except:
 		return False
 
-def isJson(x):
-	try:
-		json.loads(x)
-		return True
-	except:
-		return False
-
 def checkData(thetas, key, f):
 	if (key not in thetas or not f(thetas[key])):
-		error.error('Unexpected error')
+		thetas[key] = 0
+	return thetas
 
 def main():
 	if (len(sys.argv) != 1):
@@ -42,15 +36,13 @@ def main():
 		f = open('thetas.json', 'r')
 		content = f.read()
 		f.close()
+		thetas = json.loads(content)
 	except:
-		error.error('error opening file')
-	if (not isJson(content)):
-		error.error('error in thetas.json')
-	thetas = json.loads(content)
-	checkData(thetas, 'theta0', isFloat)
-	checkData(thetas, 'theta1', isFloat)
-	checkData(thetas, 'min', isInt)
-	checkData(thetas, 'max', isInt)
+		error.error('0')
+	thetas = checkData(thetas, 'theta0', isFloat)
+	thetas = checkData(thetas, 'theta1', isFloat)
+	thetas = checkData(thetas, 'min', isInt)
+	thetas = checkData(thetas, 'max', isInt)
 	div = float(int(thetas['max']) - int(thetas['min']))
 	if (div == 0):
 		div = float(1)
